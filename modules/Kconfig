@@ -1,0 +1,35 @@
+menuconfig KEYBOARD_COMMON
+    bool "Keyboard common modules"
+    help
+      Common modules for ESP32C3 keyboard projects.
+
+if KEYBOARD_COMMON
+
+config KEYBOARD_COMMON_KEY_INPUT
+    bool "Enable Key Input Module (matrix scanning + debounce)"
+    default y
+    help
+      Matrix scanning + debounce with event callback.
+      Shared between led_control and bluetooth_keyboard apps.
+
+config KEYBOARD_COMMON_KEY_INPUT_POLL
+    bool "Polling mode (scan thread)"
+    depends on KEYBOARD_COMMON_KEY_INPUT
+    default y
+    help
+      Use a polling thread to scan the matrix periodically.
+      Disable this when switching to interrupt-driven mode.
+
+config KEYBOARD_COMMON_LED_CONTROL
+    bool "Enable LED Control Module (brightness + RGB update)"
+    default n
+    help
+      LED brightness control + RGB strip update (e.g. WS2812B).
+      Used by led_control app for brightness up/down via matrix keys.
+
+# Future modules go here, e.g.:
+# config KEYBOARD_COMMON_POWER_MGMT
+#     bool "Enable Power Management Module"
+#     default n
+
+endif # KEYBOARD_COMMON
