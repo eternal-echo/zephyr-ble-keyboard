@@ -41,6 +41,13 @@
 			zephyr,code = <INPUT_KEY_0>;
 		};
 	};
+
+	led_pwr: led-pwr-ctrl {
+		compatible = "regulator-fixed";
+		regulator-name = "led-pwr-ctrl";
+		enable-gpios = <&gpio0 21 GPIO_ACTIVE_LOW>;
+		regulator-boot-off;
+	};
 };
 
 &spi2 {
