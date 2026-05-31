@@ -1,8 +1,8 @@
 # Copyright (c) 2024 Arrel Neumiller
 # SPDX-License-Identifier: Apache-2.0
 
-identifier: esp32c3_mini
-name: ESP32-C3-MINI
+identifier: esp32c3_mini_usb
+name: ESP32-C3-MINI (USB)
 type: mcu
 arch: riscv
 toolchain:

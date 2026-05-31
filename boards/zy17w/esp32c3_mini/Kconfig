@@ -6,3 +6,6 @@
 config HEAP_MEM_POOL_ADD_SIZE_BOARD
 	int
 	default 4096
+
+rsource "Kconfig.esp32c3_mini_uart"
+rsource "Kconfig.esp32c3_mini_usb"

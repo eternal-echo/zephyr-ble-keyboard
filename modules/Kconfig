@@ -21,15 +21,21 @@ config KEYBOARD_COMMON_KEY_INPUT_POLL
       Disable this when switching to interrupt-driven mode.
 
 config KEYBOARD_COMMON_LED_CONTROL
-    bool "Enable LED Control Module (brightness + RGB update)"
-    default n
-    help
-      LED brightness control + RGB strip update (e.g. WS2812B).
-      Used by led_control app for brightness up/down via matrix keys.
+	bool "Enable LED Control Module (brightness + RGB update)"
+	default n
+	select LED_STRIP
+	select REGULATOR
+	help
+	  LED brightness control + RGB strip update (e.g. WS2812B).
+	  Used by led_control app for brightness up/down via matrix keys.
 
-# Future modules go here, e.g.:
-# config KEYBOARD_COMMON_POWER_MGMT
-#     bool "Enable Power Management Module"
-#     default n
+config KEYBOARD_COMMON_LED_CONTROL_POWER_GATE
+    bool "LED strip power gate via regulator"
+    depends on KEYBOARD_COMMON_LED_CONTROL
+    default y
+    help
+      Enable a regulator-fixed node (led-pwr-ctrl) to cut LED strip power
+      during deep sleep.  Boards without this MOSFET gate can disable
+      this option — led_power_enable() becomes a no-op.
 
 endif # KEYBOARD_COMMON

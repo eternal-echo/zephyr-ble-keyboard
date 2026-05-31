@@ -1,6 +1,9 @@
 /*
- * Copyright (c) 2024 Arrel Neumiller
+ * Copyright (c) 2025 Arrel Neumiller
  * SPDX-License-Identifier: Apache-2.0
+ *
+ * ESP32-C3-MINI (USB) — no CH340, uses built-in USB Serial/JTAG for console.
+ * UART0 TX=GPIO20 drives WS2812B LED strip via worldsemi,ws2812-uart.
  */
 
 /dts-v1/;
@@ -12,8 +15,8 @@
 #include <espressif/partitions_0x0_default.dtsi>
 
 / {
-	model = "ESP32C3-MINI";
-	compatible = "zy17w,esp32c3_mini";
+	model = "ESP32-C3-MINI (USB)";
+	compatible = "zy17w,esp32c3_mini_usb";
 
 	chosen {
 		zephyr,sram = &sram1;
@@ -26,15 +29,7 @@
 	aliases {
 		led-strip = &led_strip;
 		sw0 = &user_button1;
-		i2c-0 = &i2c0;
 		watchdog0 = &wdt0;
-	};
-
-	led_pwr: led-pwr-ctrl {
-		compatible = "regulator-fixed";
-		regulator-name = "led-pwr-ctrl";
-		enable-gpios = <&gpio0 21 GPIO_ACTIVE_LOW>;
-		regulator-boot-off;
 	};
 
 	gpio_keys {
@@ -49,25 +44,7 @@
 };
 
 &spi2 {
-	#address-cells = <1>;
-	#size-cells = <0>;
-	status = "okay";
-	pinctrl-0 = <&spim2_default>;
-	pinctrl-names = "default";
-
-	led_strip: ws2812@0 {
-		compatible = "worldsemi,ws2812-spi";
-		reg = <0>;
-		spi-max-frequency = <6400000>;
-		chain-length = <17>;
-		spi-cpha;
-
-		spi-one-frame = <0xf0>;
-		spi-zero-frame = <0xc0>;
-		color-mapping = <LED_COLOR_ID_GREEN
-				 LED_COLOR_ID_RED
-				 LED_COLOR_ID_BLUE>;
-	};
+	status = "disabled";
 };
 
 &usb_serial {
@@ -75,10 +52,7 @@
 };
 
 &i2c0 {
-	status = "okay";
-	clock-frequency = <I2C_BITRATE_STANDARD>;
-	pinctrl-0 = <&i2c0_default>;
-	pinctrl-names = "default";
+	status = "disabled";
 };
 
 &trng0 {
@@ -94,7 +68,32 @@
 };
 
 &uart0 {
-	status = "disabled";
+	status = "okay";
+	current-speed = <2500000>;
+	data-bits = <7>;
+	stop-bits = "1";
+	parity = "none";
+	tx-invert;
+	pinctrl-0 = <&uart0_ws2812>;
+	pinctrl-names = "default";
+	dmas = <&dma 0>, <&dma 1>;
+	dma-names = "rx", "tx";
+
+	led_strip: ws2812-strip {
+		compatible = "worldsemi,ws2812-uart";
+		one-symbol = <0x6>;
+		zero-symbol = <0x4>;
+		bits-per-symbol = <3>;
+		chain-length = <17>;
+		color-mapping = <LED_COLOR_ID_GREEN
+				 LED_COLOR_ID_RED
+				 LED_COLOR_ID_BLUE>;
+		reset-delay = <80>;
+	};
+};
+
+&dma {
+	status = "okay";
 };
 
 &esp32_bt_hci {

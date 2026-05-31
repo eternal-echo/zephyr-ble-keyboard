@@ -1,0 +1,6 @@
+# Copyright (c) 2025 Arrel Neumiller
+# SPDX-License-Identifier: Apache-2.0
+
+config BOARD_ESP32C3_MINI_USB
+	bool "ESP32-C3-MINI (USB)"
+	select SOC_ESP32C3_FH4

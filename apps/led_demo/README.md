@@ -1,18 +1,33 @@
-# LED Demo — 全红点亮
+# LED Demo
 
-上电即点亮所有 17 颗 WS2812B 为红色。  
-极简演示，验证 LED 硬件和 `led_control` 模块工作正常。
+两个板型，同一份代码，条件编译区分功能。
+
+## 板型
+
+| 板型 | 标识符 | 控制台 | LED 灯带 |
+|---|---|---|---|
+| CH340 串口版 | `esp32c3_mini_uart` | UART0 (GPIO21 TX) | 无（GPIO20 被 UART RX 占用） |
+| USB 版 | `esp32c3_mini_usb` | USB Serial/JTAG (CDC ACM) | WS2812 via UART0 TX=GPIO20 |
 
 ## 构建
 
 ```bash
 cd /home/henry/Workspace/zephyrproject/apps/bluetooth_keyboard
-source .venv/bin/activate
+source /home/henry/Workspace/zephyrproject/.venv/bin/activate
 
-west build -b esp32c3_devkitm apps/led_demo --pristine -d build/led_demo
+# CH340 串口版 — 仅打印日志，无灯带
+west build -b esp32c3_mini_uart apps/led_demo -d build_uart -p always
+west flash -d build_uart
 
-west flash
+# USB 版 — WS2812 灯带演示
+west build -b esp32c3_mini_usb apps/led_demo -d build_usb -p always
+west flash -d build_usb
 ```
+
+## 行为
+
+- **CH340 版**: 每 5 秒通过串口打印一条消息
+- **USB 版**: WS2812 灯带循环演示 — 全红 → 全绿 → 全蓝 → 熄灭 → 彩虹跑马
 
 ## 模块依赖
 
